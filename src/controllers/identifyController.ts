@@ -6,6 +6,7 @@ import {
   updateContact,
 } from "../repository";
 import { Contact, IdentifyRequest, IdentifyResponse } from "../types";
+import { validateIdentifyRequest } from "../utils/validation";
 
 /**
  * Core identify endpoint that consolidates contacts
@@ -14,9 +15,10 @@ export async function identify(req: Request, res: Response): Promise<void> {
   try {
     const { email, phoneNumber } = req.body as IdentifyRequest;
 
-    // Validate that at least one field is provided
-    if (!email && !phoneNumber) {
-      res.status(400).json({ error: "Email or phoneNumber must be provided" });
+    // Validate input
+    const validation = validateIdentifyRequest(email, phoneNumber);
+    if (!validation.valid) {
+      res.status(400).json({ error: validation.error });
       return;
     }
 
