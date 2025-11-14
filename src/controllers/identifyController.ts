@@ -74,12 +74,12 @@ async function consolidateContacts(
     if (contact.id === primary.id) {
       // Ensure it's marked as primary
       if (contact.linkPrecedence !== "primary") {
-        await updateContact(contact.id, { linkPrecedence: "primary", linkedId: null });
+        await updateContact(contact.id!, { linkPrecedence: "primary", linkedId: null });
       }
     } else {
       // Make it secondary and link to primary if not already
       if (contact.linkPrecedence !== "secondary" || contact.linkedId !== primary.id) {
-        await updateContact(contact.id, { linkPrecedence: "secondary", linkedId: primary.id });
+        await updateContact(contact.id!, { linkPrecedence: "secondary", linkedId: primary.id! });
       }
     }
   }
@@ -96,7 +96,7 @@ async function consolidateContacts(
     await createContact({
       email: hasNewEmail ? newEmail : null,
       phoneNumber: hasNewPhone ? newPhoneNumber : null,
-      linkedId: primary.id,
+      linkedId: primary.id!,
       linkPrecedence: "secondary",
     });
   }

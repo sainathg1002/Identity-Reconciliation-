@@ -10,9 +10,9 @@ export const identifyContact = async (req: Request, res: Response) => {
     }
 
     // Find any existing contacts
-    const existingContacts = await findByEmailOrPhone(email, phoneNumber);
+    const existingContacts: any[] = await findByEmailOrPhone(email, phoneNumber);
 
-    let primaryContact;
+    let primaryContact: any;
     let secondaryContacts: any[] = [];
 
     if (existingContacts.length === 0) {
@@ -28,17 +28,18 @@ export const identifyContact = async (req: Request, res: Response) => {
       const allRelatedContacts = existingContacts;
 
       // Determine the primary contact (earliest created)
-      primaryContact = allRelatedContacts.find(c => c.link_precedence === 'primary') || allRelatedContacts[0];
+      primaryContact = allRelatedContacts.find((c: any) => c.link_precedence === 'primary') || allRelatedContacts[0];
 
       // Convert others to secondary if needed
       for (const c of allRelatedContacts) {
-        if (c.id !== primaryContact.id && c.link_precedence !== 'secondary') {
-          await updateLinkedId(c.id, primaryContact.id);
+        const cc: any = c;
+        if (cc.id !== primaryContact.id && cc.link_precedence !== 'secondary') {
+          await updateLinkedId(cc.id, primaryContact.id);
         }
       }
 
       // Add a new contact if this email/phone combination doesn’t exist
-      const hasExact = allRelatedContacts.some(c => c.email === email && c.phone_number === phoneNumber);
+      const hasExact = allRelatedContacts.some((c: any) => c.email === email && c.phone_number === phoneNumber);
       if (!hasExact) {
         const newSecondary = await createContact({
           email,
@@ -49,16 +50,16 @@ export const identifyContact = async (req: Request, res: Response) => {
         secondaryContacts.push(newSecondary);
       }
 
-      secondaryContacts.push(...allRelatedContacts.filter(c => c.link_precedence === 'secondary'));
+      secondaryContacts.push(...allRelatedContacts.filter((c: any) => c.link_precedence === 'secondary'));
     }
 
     // Consolidate response
     const allContacts = [primaryContact, ...secondaryContacts];
-    const emails = Array.from(new Set(allContacts.map(c => c.email).filter(Boolean)));
-    const phoneNumbers = Array.from(new Set(allContacts.map(c => c.phone_number).filter(Boolean)));
+    const emails = Array.from(new Set(allContacts.map((c: any) => c.email).filter(Boolean)));
+    const phoneNumbers = Array.from(new Set(allContacts.map((c: any) => c.phone_number).filter(Boolean)));
     const secondaryIds = allContacts
-      .filter(c => c.link_precedence === 'secondary')
-      .map(c => c.id);
+      .filter((c: any) => c.link_precedence === 'secondary')
+      .map((c: any) => c.id);
 
     return res.status(200).json({
       contact: {

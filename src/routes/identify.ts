@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { pool } from "../db";
+import pool from "../db";
 
 const router = express.Router();
 
@@ -34,13 +34,13 @@ router.post("/", async (req: Request, res: Response) => {
       phoneNumbers = [rows[0].phone_number];
     } else {
       // Identify primary
-      const primary = existingContacts.find(c => c.link_precedence === "primary") || existingContacts[0];
+      const primary = existingContacts.find((c: any) => c.link_precedence === "primary") || existingContacts[0];
       primaryContactId = primary.id;
 
       // Create secondary if new info
       const alreadyExists =
-        existingContacts.some(c => c.email === email) &&
-        existingContacts.some(c => c.phone_number === phoneNumber);
+        existingContacts.some((c: any) => c.email === email) &&
+        existingContacts.some((c: any) => c.phone_number === phoneNumber);
 
       if (!alreadyExists) {
         const { rows } = await pool.query(
@@ -51,11 +51,11 @@ router.post("/", async (req: Request, res: Response) => {
         existingContacts.push(rows[0]);
       }
 
-      emails = Array.from(new Set(existingContacts.map(c => c.email).filter(Boolean)));
-      phoneNumbers = Array.from(new Set(existingContacts.map(c => c.phone_number).filter(Boolean)));
+      emails = Array.from(new Set(existingContacts.map((c: any) => c.email).filter(Boolean)));
+      phoneNumbers = Array.from(new Set(existingContacts.map((c: any) => c.phone_number).filter(Boolean)));
       secondaryContactIds = existingContacts
-        .filter(c => c.link_precedence === "secondary")
-        .map(c => c.id);
+        .filter((c: any) => c.link_precedence === "secondary")
+        .map((c: any) => c.id);
     }
 
     res.status(200).json({
