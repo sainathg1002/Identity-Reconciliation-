@@ -24,6 +24,7 @@ dist/
 build/
 *.js
 !tsconfig.js
+!scripts/**/*.js
 
 # Logs
 logs/
