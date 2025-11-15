@@ -20,7 +20,7 @@ services:
     healthCheckInterval: 30
     healthCheckTimeout: 5
     maxShutdownDelay: 30
-    preDeployCommand: npm run db:init
+    postDeployCommand: bash scripts/render-post-deploy.sh
     autoDeploy: true
     region: oregon
 
